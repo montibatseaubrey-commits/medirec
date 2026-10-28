@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medirec | Demo Login</title>
+    <style>
+      :root {
+        --bg: #eef5f2;
+        --panel: #ffffff;
+        --panel-alt: #f4f9f7;
+        --border: #dfeae5;
+        --text: #14332d;
+        --muted: #58706a;
+        --primary: #1f5e52;
+        --primary-soft: #dfeee9;
+        --accent: #d3893f;
+        --success: #2e7a49;
+        --success-soft: #e3f5e8;
+        --warning: #a36c1a;
+        --warning-soft: #f9efd8;
+        --danger: #b54535;
+        --danger-soft: #fbe8e5;
+        --shadow: 0 16px 40px rgba(17, 31, 28, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #edf5f3, #f7faf9);
+        color: var(--text);
+      }
+      .login-wrap {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 30px 20px;
+      }
+      .login-card {
+        width: min(1100px, 100%);
+        display: grid;
+        grid-template-columns: 1.05fr 1.3fr;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+      .hero {
+        background: linear-gradient(180deg, var(--primary), #244d46);
+        color: white;
+        padding: 36px 30px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 26px;
+      }
+      .brand-mark {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+      h1 { margin: 0; font-size: 2rem; }
+      .hero h2 {
+        margin: 0 0 10px;
+        font-size: clamp(2rem, 3vw, 2.8rem);
+      }
+      .hero p {
+        margin: 0;
+        color: rgba(255,255,255,0.82);
+        line-height: 1.6;
+      }
+      .login-panel {
+        padding: 32px 28px;
+      }
+      .login-panel h3 {
+        margin: 0 0 8px;
+        font-size: 1.9rem;
+      }
+      .login-panel .intro {
+        margin: 0 0 18px;
+        color: var(--muted);
+      }
+      .roles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .role-box {
+        background: var(--panel-alt);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+      }
+      .role-box strong { display: block; margin-bottom: 4px; }
+      .role-box span { color: var(--muted); font-size: 0.8rem; }
+      form {
+        display: grid;
+        gap: 14px;
+      }
+      .field { display: grid; gap: 8px; }
+      label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      input, select, textarea, button {
+        font: inherit;
+      }
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: #fafcfb;
+        padding: 11px 12px;
+        border-radius: 10px;
+        color: var(--text);
+      }
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .primary-btn {
+        background: var(--primary);
+        color: white;
+      }
+      .secondary-btn {
+        background: var(--panel-alt);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .note {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      @media (max-width: 760px) {
+        .login-card { grid-template-columns: 1fr; }
+        .roles { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="hero">
+          <div class="brand">
+            <div class="brand-mark">M</div>
+            <h1>Medirec</h1>
+          </div>
+          <h2>Medicine distribution visibility for Botswana.</h2>
+          <p>Connected coordination across CMS, regional depots, health facilities, and pharmacy teams for medicine stock continuity and distribution tracking.</p>
+        </div>
+        <div class="login-panel">
+          <h3>Demo stakeholder access</h3>
+          <p class="intro">Select a role and sign in using the sample credentials below.</p>
+          <div class="roles">
+            <div class="role-box"><strong>CMS</strong><span>cms@medirec.demo</span></div>
+            <div class="role-box"><strong>Regional Depot</strong><span>regional@medirec.demo</span></div>
+            <div class="role-box"><strong>Facility</strong><span>facility@medirec.demo</span></div>
+            <div class="role-box"><strong>Pharmacy</strong><span>pharmacy@medirec.demo</span></div>
+          </div>
+          <form id="loginForm">
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" value="cms@medirec.demo" required />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input type="password" id="password" value="cms123" required />
+            </div>
+            <button class="primary-btn" type="submit">Access dashboard</button>
+            <div class="note">Demo-only login. This prototype uses role-based route gating for presentation purposes.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const users = {
+        'cms@medirec.demo': { password: 'cms123', role: 'cms', name: 'Lerato Mokoena', org: 'Central Medical Stores' },
+        'regional@medirec.demo': { password: 'regional123', role: 'regional', name: 'Thabo Kgosi', org: 'Southern Region Depot' },
+        'facility@medirec.demo': { password: 'facility123', role: 'facility', name: 'Aisha Ramokgadi', org: 'Gaborone District Hospital' },
+        'pharmacy@medirec.demo': { password: 'pharmacy123', role: 'pharmacy', name: 'Keitumetse Dlamini', org: 'Pharmacy / Dispensing Unit' }
+      };
+
+      document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const user = users[email];
+
+        if (!user || user.password !== password) {
+          alert('Invalid demo credentials. Use one of the sample accounts shown in the page.');
+          return;
+        }
+
+        const session = { email, role: user.role, name: user.name, org: user.org };
+        localStorage.setItem('medirec-demo-session', JSON.stringify(session));
+        window.location.href = user.role + '.html';
+      });
+    </script>
+  </body>
+</html>
+
+

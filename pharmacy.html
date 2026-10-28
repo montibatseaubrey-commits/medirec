@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medirec | Facility Dashboard</title>
+    <style>
+      :root { --bg:#edf4f2; --panel:#fff; --border:#dfe8e5; --text:#12372f; --muted:#5d706c; --primary:#225f54; --primary-soft:#dfeee9; --success:#2d7d55; --success-soft:#e2f6e9; --warning:#9d6c1a; --warning-soft:#f9efda; --accent:#d98d3d; --accent-soft:#f9efe1; --danger:#b4483d; --danger-soft:#fbe9e5; }
+      * { box-sizing:border-box; }
+      body { margin:0; font-family:Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+      a { color:inherit; text-decoration:none; }
+      .topbar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px; background:var(--panel); border-bottom:1px solid var(--border); }
+      .brand { display:flex; align-items:center; gap:12px; }
+      .brand-mark { width:42px; height:42px; border-radius:12px; display:grid; place-items:center; color:white; font-weight:700; background:linear-gradient(135deg, var(--primary), #316a62); }
+      .user { display:flex; align-items:center; gap:14px; }
+      .badge { border-radius:999px; padding:6px 10px; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:700; }
+      .role-badge { background: var(--primary-soft); color: var(--primary); }
+      .logout { border:1px solid var(--border); border-radius:10px; background:#f1f3f2; padding:10px 14px; font-weight:700; cursor:pointer; }
+      .nav { display:flex; gap:10px; padding:18px 28px 0; flex-wrap:wrap; }
+      .nav a { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:9px 14px; }
+      .nav a.active { background: var(--primary-soft); color:var(--primary); }
+      .page { padding:24px 28px 40px; }
+      .hero { background:var(--panel); border:1px solid var(--border); border-radius:20px; box-shadow:0 14px 36px rgba(13,28,24,0.06); padding:22px 24px; margin-bottom:18px; }
+      .hero h2 { margin:0 0 8px; }
+      .hero p { margin:0; color:var(--muted); }
+      .stats { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); margin-bottom:18px; }
+      .stat { background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:18px; }
+      .stat-label { color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; }
+      .stat-value { font-size:1.9rem; font-weight:700; margin:8px 0 5px; }
+      .stat-note { color:var(--success); font-size:0.88rem; }
+      .grid { display:grid; grid-template-columns: 1.35fr 1fr; gap:18px; margin-bottom:18px; }
+      .panel { background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:18px; }
+      .panel h3 { margin:0 0 12px; }
+      .field-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; }
+      .field { display:grid; gap:8px; }
+      label { color:var(--muted); font-size:0.8rem; font-weight:700; }
+      input, select, textarea, button { font:inherit; }
+      input, select, textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:#fbfdfc; }
+      textarea { min-height:90px; resize:vertical; }
+      button.action { border:none; border-radius:10px; padding:10px 14px; background:var(--primary); color:white; font-weight:700; cursor:pointer; }
+      table { width:100%; border-collapse: collapse; }
+      th, td { border-bottom:1px solid var(--border); padding:10px 8px; text-align:left; }
+      th { text-transform:uppercase; font-size:0.76rem; letter-spacing:0.06em; color:var(--muted); }
+      .status { display:inline-flex; padding:5px 9px; border-radius:999px; font-size:0.7rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; }
+      .status-submitted { background:#edf3ff; color:#2a5d9c; }
+      .status-under-review { background:#f3ecff; color:#5d4c96; }
+      .status-allocated { background: var(--primary-soft); color: var(--primary); }
+      .status-dispatched { background:#edf1ff; color:#335a9c; }
+      .status-in-transit { background:var(--accent-soft); color:var(--warning); }
+      .status-received { background:var(--success-soft); color:var(--success); }
+      .status-reconciled { background:#eaf8ef; color:#2d7d56; }
+      .status-low-stock { background:var(--warning-soft); color:var(--warning); }
+      .list { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+      .list li { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between; gap:12px; }
+      @media (max-width:860px){ .grid{grid-template-columns:1fr;} .topbar{flex-direction:column; align-items:flex-start; gap:12px;} }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div><strong>Medirec</strong></div>
+      </div>
+      <div class="user">
+        <span class="badge role-badge">Facility</span>
+        <span id="userName">Loading...</span>
+        <button class="logout" onclick="logoutUser()">Logout</button>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="cms.html">CMS overview</a>
+      <a href="regional.html">Regional view</a>
+      <a class="active" href="facility.html">Facility view</a>
+      <a href="pharmacy.html">Pharmacy view</a>
+    </nav>
+    <main class="page">
+      <section class="hero">
+        <h2>Gaborone District Hospital</h2>
+        <p>Submit supply requests, review order status, confirm receipts, and maintain facility stock visibility through the medication supply chain.</p>
+      </section>
+      <section class="stats" id="stats"></section>
+      <div class="grid">
+        <section class="panel" id="orderFormPanel"></section>
+        <section class="panel" id="alertsPanel"></section>
+      </div>
+      <div class="grid">
+        <section class="panel" id="ordersPanel"></section>
+        <section class="panel" id="receiptPanel"></section>
+      </div>
+      <div class="grid">
+        <section class="panel" id="stockPanel"></section>
+        <section class="panel" id="historyPanel"></section>
+      </div>
+    </main>
+
+    <script>
+      function requireSession() {
+        const session = JSON.parse(localStorage.getItem('medirec-demo-session') || 'null');
+        if (!session || session.role !== 'facility') {
+          window.location.href = 'index.html';
+          return null;
+        }
+        return session;
+      }
+      function logoutUser() { localStorage.removeItem('medirec-demo-session'); window.location.href='index.html'; }
+      function defaultData() {
+        return {
+          orders: [
+            { id:'ORD-1042', medicine:'Amoxicillin 250mg Capsule', quantityOrdered:300, quantityAllocated:0, quantityDispatched:0, quantityReceived:0, status:'Submitted', facility:'Gaborone District Hospital', updatedAt:'2026-10-15T08:15:00', notes:'Pediatric ward stock low.' },
+            { id:'ORD-1050', medicine:'Oxytocin Injection', quantityOrdered:120, quantityAllocated:120, quantityDispatched:120, quantityReceived:48, status:'Received', facility:'Francistown Clinic', updatedAt:'2026-10-18T10:30:00' },
+            { id:'ORD-1054', medicine:'Paracetamol 500mg', quantityOrdered:540, quantityAllocated:540, quantityDispatched:540, quantityReceived:0, status:'In Transit', facility:'Serowe Health Centre', updatedAt:'2026-10-22T16:45:00' }
+          ],
+          stock: {
+            facility:[
+              { medicine:'Amoxicillin 250mg Capsule', unit:'pack', quantity:92, location:'Ward Store', status:'Low' },
+              { medicine:'Paracetamol 500mg', unit:'tablet', quantity:640, location:'Pharmacy', status:'Ready' },
+              { medicine:'Ceftriaxone Injection', unit:'vial', quantity:36, location:'Emergency Unit', status:'Low' }
+            ],
+            cms:[], regional:[], pharmacy:[]
+          },
+          movements: [
+            { medicine:'Amoxicillin 250mg Capsule', quantity:300, unit:'pack', source:'Gaborone District Hospital', destination:'CMS', status:'Submitted', stakeholder:'Facility' },
+            { medicine:'Oxytocin Injection', quantity:120, unit:'vial', source:'CMS', destination:'Francistown Clinic', status:'Dispatched', stakeholder:'CMS' },
+            { medicine:'Paracetamol 500mg', quantity:540, unit:'tablet', source:'CMS', destination:'Serowe Health Centre', status:'In Transit', stakeholder:'CMS' }
+          ]
+        };
+      }
+      function getData() { return JSON.parse(localStorage.getItem('medirec-demo-data') || 'null') || defaultData(); }
+      function setData(data) { localStorage.setItem('medirec-demo-data', JSON.stringify(data)); }
+      function renderStatus(status){ const key = (status||'').toLowerCase().replace(/\s+/g,'-'); return `<span class="status status-${key}">${status}</span>`; }
+      function renderStats(data) {
+        const orderCount = data.orders.filter(o => o.facility === 'Gaborone District Hospital').length;
+        const pendingReceipt = data.orders.filter(o => ['Allocated','Dispatched','In Transit'].includes(o.status)).length;
+        const lowStock = data.stock.facility.filter(item => item.status === 'Low').length;
+        const reconciled = data.orders.filter(o => ['Received','Reconciled'].includes(o.status)).length;
+        document.getElementById('stats').innerHTML = `
+          <div class="stat"><div class="stat-label">Orders submitted</div><div class="stat-value">${orderCount}</div><div class="stat-note">Recently requested</div></div>
+          <div class="stat"><div class="stat-label">Pending receipt</div><div class="stat-value">${pendingReceipt}</div><div class="stat-note">Awaiting confirmation</div></div>
+          <div class="stat"><div class="stat-label">Stock at risk</div><div class="stat-value">${lowStock}</div><div class="stat-note">Low stock lines</div></div>
+          <div class="stat"><div class="stat-label">Reconciled</div><div class="stat-value">${reconciled}</div><div class="stat-note">Confirmed</div></div>
+        `;
+      }
+      function renderOrderForm() {
+        document.getElementById('orderFormPanel').innerHTML = `
+          <h3>Submit medicine supply request</h3>
+          <form id="orderForm">
+            <div class="field-grid">
+              <div class="field"><label>Medicine</label><select name="medicine"><option>Amoxicillin 250mg Capsule</option><option>Paracetamol 500mg</option><option>Ceftriaxone Injection</option><option>Oxytocin Injection</option><option>Insulin Glargine</option></select></div>
+              <div class="field"><label>Quantity</label><input type="number" value="180" name="quantity" /></div>
+              <div class="field"><label>Priority</label><select name="priority"><option>High</option><option>Normal</option><option>Critical</option></select></div>
+            </div>
+            <div class="field" style="margin-top:14px;"><label>Notes</label><textarea name="notes">Restocking for pediatric and emergency units.</textarea></div>
+            <div style="margin-top:14px;"><button class="action" type="submit">Submit order</button></div>
+          </form>
+        `;
+      }
+      function renderAlerts() {
+        const items = [
+          { title:'Receipt pending', detail:'Confirmed shipments are awaiting final facility receipt.', tag:'Review' },
+          { title:'Low stock', detail:'Ceftriaxone and Amoxicillin counts require quick review.', tag:'Low stock' },
+          { title:'Order under review', detail:'The insulin request is pending central allocation review.', tag:'Urgent' }
+        ];
+        document.getElementById('alertsPanel').innerHTML = `
+          <h3>Alerts & follow-up</h3>
+          <ul class="list">${items.map(item => `
+            <li><div><strong>${item.title}</strong><div>${item.detail}</div></div><span class="status status-${item.tag === 'Urgent' ? 'urgent' : item.tag === 'Low stock' ? 'low-stock' : 'under-review'}">${item.tag}</span></li>
+          `).join('')}</ul>
+        `;
+      }
+      function renderOrders(data) {
+        const rows = data.orders.map(order => `
+          <tr><td>${order.id}</td><td>${order.medicine}</td><td>${order.quantityOrdered}</td><td>${renderStatus(order.status)}</td><td>${new Date(order.updatedAt).toLocaleString()}</td></tr>
+        `).join('');
+        document.getElementById('ordersPanel').innerHTML = `
+          <h3>Submitted orders</h3>
+          <table><thead><tr><th>Order</th><th>Medicine</th><th>Qty</th><th>Status</th><th>Updated</th></tr></thead><tbody>${rows}</tbody></table>
+        `;
+      }
+      function renderReceiptPanel(data) {
+        const options = data.orders.map(order => `<option value="${order.id}">${order.id} · ${order.medicine}</option>`).join('');
+        document.getElementById('receiptPanel').innerHTML = `
+          <h3>Confirm delivery receipt</h3>
+          <form id="receiptForm">
+            <div class="field-grid">
+              <div class="field"><label>Order reference</label><select name="orderId">${options}</select></div>
+              <div class="field"><label>Actual received</label><input type="number" name="quantity" value="120" /></div>
+              <div class="field"><label>Discrepancy</label><input type="number" name="discrepancy" value="12" /></div>
+            </div>
+            <div style="margin-top:14px;"><button class="action" type="submit">Confirm receipt</button></div>
+          </form>
+        `;
+      }
+      function renderStock(data) {
+        const rows = data.stock.facility.map(item => `
+          <tr><td>${item.medicine}</td><td>${item.quantity} ${item.unit}</td><td>${item.location}</td><td><span class="status status-${item.status === 'Low' ? 'low-stock' : 'allocated'}">${item.status}</span></td></tr>
+        `).join('');
+        document.getElementById('stockPanel').innerHTML = `
+          <h3>Facility stock overview</h3>
+          <table><thead><tr><th>Medicine</th><th>Qty</th><th>Location</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+        `;
+      }
+      function renderHistory(data) {
+        const rows = data.movements.slice(0,5).map(item => `
+          <li><div><strong>${item.medicine}</strong><div>${item.source} → ${item.destination}</div></div><div>${item.quantity} ${item.unit}<br>${renderStatus(item.status)}</div></li>
+        `).join('');
+        document.getElementById('historyPanel').innerHTML = `
+          <h3>Movement history</h3>
+          <ul class="list">${rows}</ul>
+        `;
+      }
+      function initPage() {
+        const session = requireSession();
+        if (!session) return;
+        document.getElementById('userName').textContent = `${session.name} · ${session.org}`;
+        const data = getData();
+        renderStats(data);
+        renderOrderForm();
+        renderAlerts();
+        renderOrders(data);
+        renderReceiptPanel(data);
+        renderStock(data);
+        renderHistory(data);
+
+        document.getElementById('orderForm').addEventListener('submit', function(e){
+          e.preventDefault();
+          const form = new FormData(e.target);
+          const medicine = form.get('medicine');
+          const quantity = Number(form.get('quantity'));
+          const priority = form.get('priority');
+          const notes = form.get('notes');
+          data.orders.unshift({ id:'ORD-' + Math.floor(Math.random()*9000 + 1000), medicine, quantityOrdered: quantity, quantityAllocated:0, quantityDispatched:0, quantityReceived:0, status:'Submitted', facility:'Gaborone District Hospital', updatedAt:new Date().toISOString(), notes, priority });
+          data.movements.unshift({ medicine, quantity, unit:'pack', source:'Gaborone District Hospital', destination:'CMS', status:'Submitted', stakeholder:'Facility' });
+          setData(data);
+          alert('Order submitted successfully.');
+          window.location.reload();
+        });
+
+        document.getElementById('receiptForm').addEventListener('submit', function(e){
+          e.preventDefault();
+          const form = new FormData(e.target);
+          const orderId = form.get('orderId');
+          const quantity = Number(form.get('quantity'));
+          const discrepancy = Number(form.get('discrepancy') || 0);
+          const order = data.orders.find(item => item.id === orderId);
+          if (!order) return;
+          order.quantityReceived = quantity;
+          order.status = discrepancy > 0 ? 'Received' : 'Reconciled';
+          order.updatedAt = new Date().toISOString();
+          data.movements.unshift({ medicine: order.medicine, quantity, unit:'pack', source:'Regional Depot', destination:'Gaborone District Hospital', status: order.status, stakeholder:'Facility' });
+          setData(data);
+          alert('Receipt confirmed.');
+          window.location.reload();
+        });
+      }
+      initPage();
+    </script>
+  </body>
+</html>
